@@ -1,3 +1,5 @@
+# coding=utf-8
+# services/app/project/db/model_users.py
 
 from sqlalchemy.sql import func
 from project import db
@@ -53,13 +55,14 @@ class Usuario(db.Model, Entity):
     usuario = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     estado = db.Column(db.Integer, nullable=False)
-    persona_id = db.Column(db.Integer, db.ForeignKey(Persona.__table__.c['id']))
+    id_persona = db.Column(db.Integer, db.ForeignKey(Persona.__table__.c['id']))
 
-    def __init__(self, usuario, password, estado, created_by):
+    def __init__(self, usuario, password, estado, id_persona, created_by):
         Entity.__init__(self, created_by)
         self.usuario = usuario
         self.password = password
         self.estado = estado
+        self.id_persona = id_persona
     
     def to_json(self):
         return {
@@ -67,6 +70,7 @@ class Usuario(db.Model, Entity):
             "usuario": self.usuario,
             "password": self.password,
             "estado": self.estado,
+            "id_persona": self.id_persona
         }
 
 
@@ -93,25 +97,26 @@ class Rol(db.Model, Entity):
             "estado": self.estado
         }
 
+
 class UsuarioRol(db.Model, Entity):
 
     __tablename__ = 'usuario_rol'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     estado = db.Column(db.Integer, nullable=False)
-    usuario_id = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
-    rol_id = db.Column(db.Integer, db.ForeignKey(Rol.__table__.c['id']))
+    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
+    id_rol = db.Column(db.Integer, db.ForeignKey(Rol.__table__.c['id']))
 
-    def __init__(self, estado, usuario_id, rol_id, created_by):
+    def __init__(self, estado, id_usuario, id_rol, created_by):
         Entity.__init__(self, created_by)
         self.estado = estado
-        self.usuario_id = usuario_id
-        self.rol_id = rol_id
+        self.id_usuario = id_usuario
+        self.id_rol = id_rol
     
     def to_json(self):
         return {
             "id": self.id,
             "estado": self.estado,
-            "usuario_id": self.usuario_id,
-            "rol_id": self.rol_id
+            "id_usuario": self.id_usuario,
+            "id_rol": self.id_rol
         }

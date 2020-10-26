@@ -6,6 +6,6 @@ while ! nc -z users-db 5432; do
   sleep 0.1
 done
 
-echo "PostgreSQL iniciado:w"
+echo "PostgreSQL iniciado"
 
-python manage.py run -h 0.0.0.0
+gunicorn -b 0.0.0.0:5000 manage:app

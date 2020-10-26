@@ -1,8 +1,8 @@
+# coding=utf-8
 # services/app/project/__init__.py
 
 import os
 from flask import Flask
-# from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy  # nuevo
 from flask_debugtoolbar import DebugToolbarExtension  # nuevo
 
