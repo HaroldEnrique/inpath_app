@@ -2,4 +2,4 @@
 
 @Upeu
 
-[![Build Status](https://travis-ci.org/HaroldEnrique/inpath_app.svg?branch=master)](https://travis-ci.org/HaroldEnrique/inpath_app)
+[![Build Status](https://travis-ci.org/HaroldEnrique/inpath_app.svg?branch=main)](https://travis-ci.org/HaroldEnrique/inpath_app)
