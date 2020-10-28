@@ -1,5 +1,5 @@
 # coding=utf-8
-# services/users/manage.py
+# services/main/manage.py
 
 import sys
 import unittest
@@ -7,7 +7,7 @@ import coverage
 
 from flask.cli import FlaskGroup
 from project import create_app, db
-from project.db.model_users import Persona
+from project.api.model_usuarios import Persona
 
 # just for testing
 from datetime import datetime
@@ -65,28 +65,6 @@ def seed_db():
         correo="norma@gmail.com",
         colegio="colegio2",
         celular=654654654,
-        fecha_nac=datetime.utcnow(),
-        created_by="seed script"))
-    db.session.add(Persona(
-        nombres="Nicole",
-        ape_paterno="Gamarra",
-        ape_materno="2020",
-        tipo_doc="dni",
-        doc=543543,
-        correo="nicole@gmail.com",
-        colegio="colegio3",
-        celular=123123123,
-        fecha_nac=datetime.utcnow(),
-        created_by="seed script"))
-    db.session.add(Persona(
-        nombres="Julio",
-        ape_paterno="Granados",
-        ape_materno="2020",
-        tipo_doc="dni",
-        doc=543543,
-        correo="julio@gmail.com",
-        colegio="colegio4",
-        celular=123123123,
         fecha_nac=datetime.utcnow(),
         created_by="seed script"))
 

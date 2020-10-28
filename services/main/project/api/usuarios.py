@@ -1,25 +1,26 @@
 # coding=utf-8
-# services/app/project/api/users.py
+# services/main/project/api/usuarios.py
 
 from flask_restful import Resource, Api
 from sqlalchemy import exc
-from project import db
-from project.db.model_users import Usuario, Rol, Persona, UsuarioRol
 from flask import Blueprint, request
 
-users_blueprint = Blueprint('users', __name__)
-api = Api(users_blueprint)
+from project import db
+from project.api.model_usuarios import Persona
+
+usuarios_blueprint = Blueprint('usuarios', __name__)
+api = Api(usuarios_blueprint)
 
 
-class PersonsPing(Resource):
+class UsuariosPing(Resource):
     def get(self):
         return {
-            'status': 'success',
+            'status': 'success_usuarios',
             'message': 'pong!'
         }
 
 
-class PersonsList(Resource):
+class PersonasList(Resource):
     def post(self):
         post_data = request.get_json()
         response_object = {
@@ -28,7 +29,7 @@ class PersonsList(Resource):
         }
         if not post_data:
             return response_object, 400
-        
+
         nombres = post_data.get('nombres')
         ape_paterno = post_data.get('ape_paterno')
         ape_materno = post_data.get('ape_materno')
@@ -39,7 +40,7 @@ class PersonsList(Resource):
         celular = post_data.get('celular')
         fecha_nac = post_data.get('fecha_nac')
         created_by = post_data.get('created_by')
-        
+
         try:
             person = Persona.query.filter_by(correo=correo).first()
             if not person:
@@ -54,14 +55,13 @@ class PersonsList(Resource):
                     celular=celular,
                     fecha_nac=fecha_nac,
                     created_by=created_by
-                    ))
-                
+                ))
                 db.session.commit()
                 response_object['status'] = 'success'
                 response_object['message'] = f'{correo} was added!'
                 return response_object, 201
             else:
-                response_object['message'] = 'Sorry. Email already exists.'
+                response_object['message'] = 'Sorry. That email already exists.'
                 return response_object, 400
         except exc.IntegrityError:
             db.session.rollback()
@@ -73,13 +73,33 @@ class PersonsList(Resource):
         response_object = {
             'status': 'success',
             'data': {
-                'persons': [person.to_json() for person in Persona.query.all()]
+                'personas': [persona.to_json() for persona in Persona.query.all()]
             }
         }
         return response_object, 200
 
 
+class Personas(Resource):
+    def get(self, persona_id):
+        """Obtenga detalles de un solo usuario."""
+        response_object = {
+            'status': 'fail',
+            'message': 'Persona does not exist'
+        }
+        try:
+            persona = Persona.query.filter_by(id=int(persona_id)).first()
+            if not persona:
+                return response_object, 404
+            else:
+                response_object = {
+                    'status': 'success',
+                    'data': persona.to_json()
+                }
+                return response_object, 200
+        except ValueError:
+            return response_object, 404
 
-api.add_resource(PersonsPing, '/persons/ping')
-api.add_resource(PersonsList, '/persons')
-#api.add_resource(Persons, '/persons/<user_id>')
+
+api.add_resource(UsuariosPing, '/usuarios/ping')
+api.add_resource(PersonasList, '/personas')
+api.add_resource(Personas, '/personas/<persona_id>')

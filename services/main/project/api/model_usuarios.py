@@ -1,7 +1,7 @@
 # coding=utf-8
-# services/app/project/db/model_users.py
+# services/main/project/api/model_usuarios.py
 
-from sqlalchemy.sql import func
+# from sqlalchemy.sql import func
 from project import db
 from .entity import Entity
 
@@ -27,11 +27,12 @@ class Persona(db.Model, Entity):
         self.ape_paterno = ape_paterno
         self.ape_materno = ape_materno
         self.tipo_doc = tipo_doc
+        self.doc = doc
         self.correo = correo
         self.colegio = colegio
         self.celular = celular
         self.fecha_nac = fecha_nac
-    
+
     def to_json(self):
         return {
             "id": self.id,
@@ -43,7 +44,10 @@ class Persona(db.Model, Entity):
             "correo": self.correo,
             "colegio": self.colegio,
             "celular": self.celular,
-            "fecha_nac": self.fecha_nac,
+            "fecha_nac": self.fecha_nac.strftime('%Y-%m-%dT%H:%M:%S'),
+            "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
+            "updated_at": self.updated_at.strftime('%Y-%m-%dT%H:%M:%S'),
+            "last_updated_by": self.last_updated_by
         }
 
 
@@ -55,7 +59,8 @@ class Usuario(db.Model, Entity):
     usuario = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     estado = db.Column(db.Integer, nullable=False)
-    id_persona = db.Column(db.Integer, db.ForeignKey(Persona.__table__.c['id']))
+    id_persona = db.Column(
+        db.Integer, db.ForeignKey(Persona.__table__.c['id']))
 
     def __init__(self, usuario, password, estado, id_persona, created_by):
         Entity.__init__(self, created_by)
@@ -63,7 +68,7 @@ class Usuario(db.Model, Entity):
         self.password = password
         self.estado = estado
         self.id_persona = id_persona
-    
+
     def to_json(self):
         return {
             "id": self.id,
@@ -88,7 +93,7 @@ class Rol(db.Model, Entity):
         self.nombre = nombre
         self.descripcion = descripcion
         self.estado = estado
-    
+
     def to_json(self):
         return {
             "id": self.id,
@@ -104,7 +109,8 @@ class UsuarioRol(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     estado = db.Column(db.Integer, nullable=False)
-    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
+    id_usuario = db.Column(
+        db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
     id_rol = db.Column(db.Integer, db.ForeignKey(Rol.__table__.c['id']))
 
     def __init__(self, estado, id_usuario, id_rol, created_by):
@@ -112,7 +118,7 @@ class UsuarioRol(db.Model, Entity):
         self.estado = estado
         self.id_usuario = id_usuario
         self.id_rol = id_rol
-    
+
     def to_json(self):
         return {
             "id": self.id,

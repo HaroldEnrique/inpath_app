@@ -1,14 +1,14 @@
 # coding=utf-8
-# services/app/project/__init__.py
+# services/main/project/__init__.py
 
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy  # nuevo
-from flask_debugtoolbar import DebugToolbarExtension  # nuevo
+from flask_sqlalchemy import SQLAlchemy
+# from flask_debugtoolbar import DebugToolbarExtension
 
 # instantiate the db
 db = SQLAlchemy()
-toolbar = DebugToolbarExtension()  # nuevo
+# toolbar = DebugToolbarExtension()
 
 
 def create_app(script_info=None):
@@ -21,11 +21,11 @@ def create_app(script_info=None):
 
     # configurar la extension
     db.init_app(app)
-    toolbar.init_app(app)  # nuevo
+    # toolbar.init_app(app)  # nuevo
 
     # registrar blueprints
-    from project.api.users import users_blueprint
-    app.register_blueprint(users_blueprint)
+    from project.api.usuarios import usuarios_blueprint
+    app.register_blueprint(usuarios_blueprint)
 
     # contexto shell para flask cli
     @app.shell_context_processor

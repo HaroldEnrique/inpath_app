@@ -5,14 +5,12 @@ services:
   main:
     build:
       context: ./services/main
-      dockerfile: Dockerfile
-    volumes:
-      - './services/main:/usr/src/app'
-    ports:
-      - 5001:5000
+      dockerfile: Dockerfile-prod
+    expose:
+      - 5000
     environment:
-      - FLASK_ENV=development
-      - APP_SETTINGS=project.config.DevelopmentConfig
+      - FLASK_ENV=production
+      - APP_SETTINGS=project.config.ProductionConfig
       - DATABASE_URL=postgres://postgres:postgres@main-db:5432/main_dev
       - DATABASE_TEST_URL=postgres://postgres:postgres@main-db:5432/main_test
     depends_on:
@@ -23,8 +21,8 @@ services:
     build:
       context: ./services/main/project/db
       dockerfile: Dockerfile
-    ports:
-      - 5435:5432
+    expose:
+      - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -32,7 +30,7 @@ services:
   nginx:
     build:
       context: ./services/nginx
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-prod
     restart: always
     ports:
       - 80:80
