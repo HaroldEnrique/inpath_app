@@ -61,7 +61,7 @@ class PersonasList(Resource):
                 response_object['message'] = f'{correo} was added!'
                 return response_object, 201
             else:
-                response_object['message'] = 'Sorry. That email already exists.'
+                response_object['message'] = 'Sorry. Email already exists.'
                 return response_object, 400
         except exc.IntegrityError:
             db.session.rollback()
@@ -73,7 +73,8 @@ class PersonasList(Resource):
         response_object = {
             'status': 'success',
             'data': {
-                'personas': [persona.to_json() for persona in Persona.query.all()]
+                'personas':
+                    [persona.to_json() for persona in Persona.query.all()]
             }
         }
         return response_object, 200

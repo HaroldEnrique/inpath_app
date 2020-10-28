@@ -21,7 +21,8 @@ class Persona(db.Model, Entity):
     fecha_nac = db.Column(db.Date, nullable=False)
     # created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
-    def __init__(self, nombres, ape_paterno, ape_materno, tipo_doc, doc, correo, colegio, celular, fecha_nac, created_by):
+    def __init__(self, nombres, ape_paterno, ape_materno, tipo_doc, doc,
+                 correo, colegio, celular, fecha_nac, created_by):
         Entity.__init__(self, created_by)
         self.nombres = nombres
         self.ape_paterno = ape_paterno
