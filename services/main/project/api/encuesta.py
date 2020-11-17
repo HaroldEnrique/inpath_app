@@ -1,15 +1,16 @@
 # coding=utf-8
-# services/main/project/api/encuesta.py
-import decimal,datetime, json
+# services/main/project/api/encuesta.pyF
+
 from flask_restful import Resource, Api
-from sqlalchemy import exc
-from flask import Blueprint, request
+from flask import Blueprint
 
 from project import db
-from project.api.model_encuesta import TipoPregunta, Pregunta, TipoEncuesta, Encuesta, Opcion
+from project.api.model_encuesta import TipoPregunta, Pregunta
+from project.api.model_encuesta import TipoEncuesta, Encuesta, Opcion
 
 encuesta_blueprint = Blueprint('encuesta', __name__)
 api = Api(encuesta_blueprint)
+
 
 class EncuestaPing(Resource):
     def get(self):
@@ -18,16 +19,18 @@ class EncuestaPing(Resource):
             'message': 'pong!'
         }
 
+
 class EncuestaList(Resource):
 
     def get(self):
         """Listar Config Test"""
 
-        q = db.session.query(TipoEncuesta, Encuesta, TipoPregunta, Pregunta, Opcion)\
-            .filter(TipoEncuesta.id == Encuesta.id_tipo_encuesta,
-                Encuesta.id == Pregunta.id_test,
-                TipoPregunta.id == Pregunta.id_tipo_pregunta,
-                Pregunta.id == Opcion.id_pregunta).all()
+        q = db.session.query(TipoEncuesta, Encuesta, TipoPregunta,
+                             Pregunta, Opcion).filter(
+                    TipoEncuesta.id == Encuesta.id_tipo_encuesta,
+                    Encuesta.id == Pregunta.id_test,
+                    TipoPregunta.id == Pregunta.id_tipo_pregunta,
+                    Pregunta.id == Opcion.id_pregunta).all()
 
         lista = []
         for i in q:
@@ -41,11 +44,8 @@ class EncuestaList(Resource):
             dict_pregunta["tipo_pregunta"] = dict_tipo_pregunta
             dict_encuesta["pregunta"] = dict_pregunta
             dict_tipo_encuesta["encuesta"] = dict_encuesta
-            
-            print(dict_tipo_encuesta)
-            lista.append(dict_tipo_encuesta) 
 
-        
+            lista.append(dict_tipo_encuesta)
 
         response_object = {
             'status': 'success',
