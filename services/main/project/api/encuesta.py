@@ -1,6 +1,6 @@
 # coding=utf-8
 # services/main/project/api/encuesta.py
-
+import decimal,datetime, json
 from flask_restful import Resource, Api
 from sqlalchemy import exc
 from flask import Blueprint, request
@@ -19,59 +19,47 @@ class EncuestaPing(Resource):
         }
 
 class EncuestaList(Resource):
-    def post(self):
-        post_data = request.get_json()
-        response_object = {
-            'status': 'fail',
-            'message': 'Invalid payload.'
-        }
-        if not post_data:
-            return response_object, 400
-
-        nombres = post_data.get('nombres')
-        ape_paterno = post_data.get('ape_paterno')
-        ape_materno = post_data.get('ape_materno')
-        tipo_doc = post_data.get('tipo_doc')
-        doc = post_data.get('doc')
-        correo = post_data.get('correo')
-        colegio = post_data.get('colegio')
-        celular = post_data.get('celular')
-        fecha_nac = post_data.get('fecha_nac')
-        created_by = post_data.get('created_by')
-
-        try:
-            person = Persona.query.filter_by(correo=correo).first()
-            if not person:
-                db.session.add(Persona(
-                    nombres=nombres,
-                    ape_paterno=ape_paterno,
-                    ape_materno=ape_materno,
-                    tipo_doc=tipo_doc,
-                    doc=doc,
-                    correo=correo,
-                    colegio=colegio,
-                    celular=celular,
-                    fecha_nac=fecha_nac,
-                    created_by=created_by
-                ))
-                db.session.commit()
-                response_object['status'] = 'success'
-                response_object['message'] = f'{correo} was added!'
-                return response_object, 201
-            else:
-                response_object['message'] = 'Sorry. Email already exists.'
-                return response_object, 400
-        except exc.IntegrityError:
-            db.session.rollback()
-            return response_object, 400
+    def alchemyencoder(obj):
+        """JSON encoder function for SQLAlchemy special classes."""
+        if isinstance(obj, datetime.date):
+            return obj.isoformat()
+        elif isinstance(obj, str):
+            return obj.strip()
+        elif isinstance(obj, decimal.Decimal):
+            return float(obj)
 
     def get(self):
         """Listar Config Test"""
 
+        q = db.session.query(TipoEncuesta, Encuesta, TipoPregunta, Pregunta, Opcion)\
+            .filter(TipoEncuesta.id == Encuesta.id_tipo_encuesta,
+                Encuesta.id == Pregunta.id_test,
+                TipoPregunta.id == Pregunta.id_tipo_pregunta,
+                Pregunta.id == Opcion.id_pregunta).all()
+
+        lista = []
+        for i in q:
+            dict_tipo_encuesta = i[0].to_json()
+            dict_encuesta = i[1].to_json()
+            dict_tipo_pregunta = i[2].to_json()
+            dict_pregunta = i[3].to_json()
+            dict_opcion = i[4].to_json()
+
+            dict_pregunta["opciones"] = dict_opcion
+            dict_pregunta["tipo_pregunta"] = dict_tipo_pregunta
+            dict_encuesta["pregunta"] = dict_pregunta
+            dict_tipo_encuesta["encuesta"] = dict_encuesta
+            
+            print(dict_tipo_encuesta)
+            lista.append(dict_tipo_encuesta) 
+
+        
+
         response_object = {
             'status': 'success',
-            'data': {
-                [TipoEncuesta.to_json() for tipo_encuesta in TipoEncuesta.query.all()]
-            }
+            'data': lista
         }
         return response_object, 200
+
+
+api.add_resource(EncuestaList, '/encuesta')

@@ -25,7 +25,10 @@ def create_app(script_info=None):
 
     # registrar blueprints
     from project.api.usuarios import usuarios_blueprint
+    from project.api.encuesta import encuesta_blueprint
+
     app.register_blueprint(usuarios_blueprint)
+    app.register_blueprint(encuesta_blueprint)
 
     # contexto shell para flask cli
     @app.shell_context_processor
