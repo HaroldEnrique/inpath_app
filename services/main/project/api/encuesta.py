@@ -19,14 +19,6 @@ class EncuestaPing(Resource):
         }
 
 class EncuestaList(Resource):
-    def alchemyencoder(obj):
-        """JSON encoder function for SQLAlchemy special classes."""
-        if isinstance(obj, datetime.date):
-            return obj.isoformat()
-        elif isinstance(obj, str):
-            return obj.strip()
-        elif isinstance(obj, decimal.Decimal):
-            return float(obj)
 
     def get(self):
         """Listar Config Test"""

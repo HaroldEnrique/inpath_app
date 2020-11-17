@@ -2,4 +2,5 @@
 
 @Upeu
 
-[![Build Status](https://travis-ci.com/HaroldEnrique/inpath_app.svg?branch=main)](https://travis-ci.com/HaroldEnrique/inpath_app)
+
+[![Build Status](https://travis-ci.com/HaroldEnrique/inpath_app.svg?token=BpjnzCR9oxTNb4KifxU4&branch=main)](https://travis-ci.com/HaroldEnrique/inpath_app)
