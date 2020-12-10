@@ -44,7 +44,7 @@ class Campana(db.Model, Entity):
         }
 
 
-class Campana_Test(db.Model, Entity):
+class CampanaTest(db.Model, Entity):
 
     __tablename__ = 'campana_test'
 
