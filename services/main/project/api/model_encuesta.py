@@ -4,7 +4,7 @@
 # from sqlalchemy.sql import func
 from project import db
 from .entity import Entity
-
+from .model_usuarios import Usuario
 
 class TipoEncuesta(db.Model, Entity):
 
@@ -63,17 +63,20 @@ class TipoPregunta(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tipo = db.Column(db.String(255), nullable=False)
+    tamanho = db.Column(db.String(255), nullable=False)
     preguntas = db.relationship('Pregunta',
                                 backref=db.backref('tipo_pregunta', lazy=True))
 
-    def __init__(self, tipo, created_by):
+    def __init__(self, tipo,tamanho, created_by):
         Entity.__init__(self, created_by)
         self.tipo = tipo
+        self.tamanho = tamanho
 
     def to_json(self):
         return {
             "id": self.id,
             "tipo": self.tipo,
+            "tamanho":self.tamanho
         }
 
 
@@ -114,17 +117,46 @@ class Opcion(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     texto = db.Column(db.String(255), nullable=False)
+    valor = db.Column(db.String(255), nullable=False)
     id_pregunta = db.Column(db.Integer, db.ForeignKey(
         Pregunta.__table__.c['id']))
 
     def __init__(self, texto, id_pregunta, created_by):
         Entity.__init__(self, created_by)
-        self.texto = texto
+        self.texto = texto,
+        self.valor = valor,
         self.id_pregunta = id_pregunta
 
     def to_json(self):
         return {
             "id": self.id,
             "texto": self.texto,
+            "valor": self.valor,
             "id_pregunta": self.id_pregunta
+        }
+
+class Respuesta(db.Model, Entity):
+
+    __tablename__ = 'respuesta'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    texto = db.Column(db.String(255), nullable=False)
+    valor = db.Column(db.String(255), nullable=False)
+    id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
+    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
+
+    def __init__(self, texto, id_pregunta, created_by):
+        Entity.__init__(self, created_by)
+        self.texto = texto
+        self.valor = valor
+        self.id_opcion = id_opcion
+        self.id_usuario = id_usuario
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "texto": self.texto,
+            "valor": self.valor,
+            "id_opcion": self.id_opcion,
+            "id_usuario": self.id_usuario
         }

@@ -5,6 +5,64 @@
 from project import db
 from .entity import Entity
 
+class Departamento(db.Model, Entity):
+
+    __tablename__ = 'departamento'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(128), nullable=False)
+
+    def __init__(self, nombre, created_by):
+        Entity.__init__(self, created_by)
+        self.nombre = nombre
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre
+        }
+
+class Provincia(db.Model, Entity):
+
+    __tablename__ = 'provincia'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(128), nullable=False)
+    id_departamento = db.Column(
+        db.Integer, db.ForeignKey(Departamento.__table__.c['id']))
+
+    def __init__(self, nombre, id_departamento, created_by):
+        Entity.__init__(self, created_by)
+        self.nombre = nombre
+        self.id_provincia = id_provincia
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "id_departamento": self.id_departamento
+        }
+
+class Distrito(db.Model, Entity):
+
+    __tablename__ = 'distrito'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(128), nullable=False)
+    id_provincia = db.Column(
+        db.Integer, db.ForeignKey(Provincia.__table__.c['id']))
+
+    def __init__(self, nombre, id_provincia, created_by):
+        Entity.__init__(self, created_by)
+        self.nombre = nombre
+        self.id_provincia = id_provincia
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "id_provincia": self.id_provincia
+        }
 
 class Persona(db.Model, Entity):
     __tablename__ = 'persona'
@@ -19,6 +77,8 @@ class Persona(db.Model, Entity):
     colegio = db.Column(db.String(255), nullable=False)
     celular = db.Column(db.Integer, nullable=False)
     fecha_nac = db.Column(db.Date, nullable=False)
+    id_distrito = db.Column(
+        db.Integer, db.ForeignKey(Persona.__table__.c['id']))
     # created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     def __init__(self, nombres, ape_paterno, ape_materno, tipo_doc, doc,
