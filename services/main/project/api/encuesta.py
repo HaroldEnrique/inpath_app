@@ -75,13 +75,12 @@ class EncuestaList(Resource):
                     nombre=nombre_test,
                     descripcion=descripcion_test,
                     estado=1,
-                    id_tipo_encuesta= id_tipo_test,
+                    id_tipo_encuesta=id_tipo_test,
                     created_by=created_by
                 )
-                db.session.add(encuesta)    
+                db.session.add(encuesta)
                 db.session.flush()
                 encuesta_id = encuesta.id
-
 
                 for i in preguntas:
                     nom_preg = i['pregunta']
@@ -90,31 +89,33 @@ class EncuestaList(Resource):
                     opciones = i['opciones']
 
                     pregunta = Pregunta(
-                        pregunta = nom_preg,
-                        tamanho = tamanho,
-                        id_tipo_pregunta = tipo_pregunta,
-                        id_test = encuesta_id,
+                        pregunta=nom_preg,
+                        tamanho=tamanho,
+                        id_tipo_pregunta=tipo_pregunta,
+                        id_test=encuesta_id,
                         created_by=created_by
                     )
-                    db.session.add(pregunta)    
+                    db.session.add(pregunta)
                     db.session.flush()
                     pregunta_id = pregunta.id
                     for j in opciones:
-                        texto = j 
+                        texto = j
                         opcion = Opcion(
-                            texto = texto,
-                            id_pregunta = pregunta_id,
+                            texto=texto,
+                            id_pregunta=pregunta_id,
                             created_by=created_by
                         )
-                        db.session.add(opcion)    
+                        db.session.add(opcion)
                         db.session.flush()
                 db.session.commit()
                 response_object['status'] = 'success'
-                response_object['message'] ='el test' f'{nombre_test} fue agregado!'
+                response_object['message'] = 'el test' f'{nombre_test} fue\
+                    agregado!'
             else:
-                test = Encuesta.query.filter_by(id=int(id_test)).first()
+                # test = Encuesta.query.filter_by(id=int(id_test)).first()
                 response_object['status'] = 'success'
-                response_object['message'] ='el test' f'{nombre_test} fue actualizado!'
+                response_object['message'] = 'el test' f'{nombre_test} fue\
+                    actualizado!'
 
             return response_object, 201
         except exc.IntegrityError:
