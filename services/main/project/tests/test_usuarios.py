@@ -9,7 +9,7 @@ from project import db
 from project.api.model_usuarios import Persona
 
 # just for testing
-from datetime import datetime
+# from datetime import datetime
 # from sqlalchemy.sql import func
 
 # def myconverter(o):
@@ -61,7 +61,7 @@ class TestUsuarioService(BaseTestCase):
                     'colegio': 'IE 164',
                     'celular': 127543578,
                     'ano_estudio': 3,
-                    'id_distrito':1,
+                    'id_distrito': 1,
                     'created_by': 'test_script'
                 }),
                 content_type='application/json',
@@ -118,7 +118,7 @@ class TestUsuarioService(BaseTestCase):
                     'colegio': 'IE 164',
                     'celular': 127543578,
                     'ano_estudio': 3,
-                    'id_distrito':1,
+                    'id_distrito': 1,
                     'created_by': 'test_script'
                 }),
                 content_type='application/json',
@@ -134,7 +134,7 @@ class TestUsuarioService(BaseTestCase):
                     'colegio': 'IE 164',
                     'celular': 127543578,
                     'ano_estudio': 3,
-                    'id_distrito':1,
+                    'id_distrito': 1,
                     'created_by': 'test_script'
                 }),
                 content_type='application/json',
@@ -189,7 +189,7 @@ class TestUsuarioService(BaseTestCase):
         add_persona('julian', 'gamarra perez', 'dni', 654654654,
                     'julian@gmail.com', 'colegio3', 765765765,
                     4, 1, 'test_script')
-        
+
         with self.client:
             response = self.client.get('/personas')
             data = json.loads(response.data.decode())

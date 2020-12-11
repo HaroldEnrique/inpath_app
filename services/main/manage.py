@@ -8,7 +8,10 @@ import coverage
 from flask.cli import FlaskGroup
 from project import create_app, db
 from project.api.model_usuarios import Persona
-from project.api.model_encuesta import TipoEncuesta, Encuesta,TipoPregunta,Pregunta,Opcion
+from project.api.model_encuesta import TipoEncuesta, Encuesta
+from project.api.model_encuesta import TipoPregunta,Pregunta,Opcion
+from project.api.model_perfil import Carrera, TipoPerfil, PerfilCarrera
+from project.api.model_campana import Campana, CampanaEncuesta
 
 # just for testing
 from datetime import datetime

@@ -147,7 +147,7 @@ class Rol(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(255), nullable=False)
-    descripcion = db.Column(db.String(255), nullable=False)
+    descripcion = db.Column(db.String(255), nullable=True)
     estado = db.Column(db.Integer, nullable=False)
 
     def __init__(self, nombre, descripcion, estado, created_by):

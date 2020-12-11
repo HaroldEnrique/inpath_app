@@ -17,9 +17,11 @@ class Campana(db.Model, Entity):
     hora = db.Column(db.String(255), nullable=False)
     estado = db.Column(db.Integer, nullable=False)
     codigo = db.Column(db.String(255), nullable=False)
+    modo = db.Column(db.String(255), nullable=True)
+    complemento = db.Column(db.String(255), nullable=True)
 
     def __init__(self, nombre, lugar, descripcion, fecha, hora,
-                 estado, codigo, created_by):
+                 estado, codigo, modo, complemento, created_by):
         Entity.__init__(self, created_by)
         self.nombre = nombre
         self.lugar = lugar
@@ -28,6 +30,8 @@ class Campana(db.Model, Entity):
         self.hora = hora
         self.estado = estado
         self.codigo = codigo
+        self.modo = modo
+        self.complemento = complemento
 
     def to_json(self):
         return {
@@ -39,33 +43,32 @@ class Campana(db.Model, Entity):
             "hora": self.hora,
             "estado": self.estado,
             "codigo": self.codigo,
-            "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "updated_at": self.updated_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "last_updated_by": self.last_updated_by
+            "modo": self.modo,
+            "complemento": self.complemento
         }
 
 
-class CampanaTest(db.Model, Entity):
+class CampanaEncuesta(db.Model, Entity):
 
-    __tablename__ = 'campana_test'
+    __tablename__ = 'campana_encuesta'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     estado = db.Column(db.Integer, nullable=False)
     id_campana = db.Column(
         db.Integer, db.ForeignKey(Campana.__table__.c['id']))
-    id_test = db.Column(
+    id_encuesta = db.Column(
         db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
 
-    def __init__(self, estado, id_campana, id_test, created_by):
+    def __init__(self, estado, id_campana, id_encuesta, created_by):
         Entity.__init__(self, created_by)
         self.estado = estado
         self.id_campana = id_campana
-        self.id_test = id_test
+        self.id_encuesta = id_encuesta
 
     def to_json(self):
         return {
             "id": self.id,
             "estado": self.estado,
             "id_campana": self.id_campana,
-            "id_test": self.id_test
+            "id_encuesta": self.id_encuesta
         }

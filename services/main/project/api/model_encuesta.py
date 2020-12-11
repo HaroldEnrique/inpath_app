@@ -5,7 +5,6 @@
 from project import db
 from .entity import Entity
 from .model_usuarios import Usuario
-from project.api.model_perfil import TipoPerfil
 
 
 class TipoEncuesta(db.Model, Entity):
@@ -69,7 +68,7 @@ class TipoPregunta(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tipo = db.Column(db.String(255), nullable=False)
-    tamanho = db.Column(db.String(255), nullable=False)
+    tamanho = db.Column(db.String(255), nullable=True)
     preguntas = db.relationship('Pregunta',
                                 backref=db.backref('tipo_pregunta', lazy=True))
 
@@ -92,33 +91,32 @@ class Pregunta(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pregunta = db.Column(db.String(255), nullable=False)
-    tamanho = db.Column(db.String(255), nullable=False)
+    tamanho = db.Column(db.String(255), nullable=True)
+    id_tipo_perfil = db.Column(db.Integer, nullable=True)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
     id_encuesta = db.Column(db.Integer,
                             db.ForeignKey(Encuesta.__table__.c['id']))
-    id_tipo_perfil = db.Column(db.Integer,
-                               db.ForeignKey(TipoPerfil.__table__.c['id']))
     opciones = db.relationship('Opcion',
                                backref=db.backref('pregunta', lazy=True))
 
-    def __init__(self, pregunta, tamanho, id_tipo_pregunta,
-                 id_encuesta, id_tipo_perfil, created_by):
+    def __init__(self, pregunta, tamanho, id_tipo_perfil, id_tipo_pregunta,
+                 id_encuesta, created_by):
         Entity.__init__(self, created_by)
         self.pregunta = pregunta
         self.tamanho = tamanho
+        self.id_tipo_perfil = id_tipo_perfil
         self.id_tipo_pregunta = id_tipo_pregunta
         self.id_encuesta = id_encuesta
-        self.id_tipo_perfil = id_tipo_perfil
 
     def to_json(self):
         return {
             "id": self.id,
             "pregunta": self.pregunta,
             "tamanho": self.tamanho,
+            "id_tipo_perfil": self.id_tipo_perfil,
             "id_tipo_pregunta": self.id_tipo_pregunta,
             "id_encuesta": self.id_encuesta,
-            "id_tipo_perfil": self.id_tipo_perfil
         }
 
 
@@ -152,7 +150,7 @@ class Respuesta(db.Model, Entity):
     __tablename__ = 'respuesta'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    texto = db.Column(db.String(255), nullable=False)
+    texto = db.Column(db.String(255), nullable=True)
     id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
     id_usuario = db.Column(db.Integer, db.ForeignKey(
         Usuario.__table__.c['id']))
