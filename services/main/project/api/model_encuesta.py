@@ -7,6 +7,7 @@ from .entity import Entity
 from .model_usuarios import Usuario
 from project.api.model_perfil import TipoPerfil
 
+
 class TipoEncuesta(db.Model, Entity):
 
     __tablename__ = 'tipo_encuesta'
@@ -72,7 +73,7 @@ class TipoPregunta(db.Model, Entity):
     preguntas = db.relationship('Pregunta',
                                 backref=db.backref('tipo_pregunta', lazy=True))
 
-    def __init__(self, tipo,tamanho, created_by):
+    def __init__(self, tipo, tamanho, created_by):
         Entity.__init__(self, created_by)
         self.tipo = tipo
         self.tamanho = tamanho
@@ -81,7 +82,7 @@ class TipoPregunta(db.Model, Entity):
         return {
             "id": self.id,
             "tipo": self.tipo,
-            "tamanho":self.tamanho
+            "tamanho": self.tamanho
         }
 
 
@@ -94,7 +95,8 @@ class Pregunta(db.Model, Entity):
     tamanho = db.Column(db.String(255), nullable=False)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
-    id_encuesta = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
+    id_encuesta = db.Column(db.Integer,
+                            db.ForeignKey(Encuesta.__table__.c['id']))
     id_tipo_perfil = db.Column(db.Integer,
                                db.ForeignKey(TipoPerfil.__table__.c['id']))
     opciones = db.relationship('Opcion',
@@ -144,6 +146,7 @@ class Opcion(db.Model, Entity):
             "id_pregunta": self.id_pregunta
         }
 
+
 class Respuesta(db.Model, Entity):
 
     __tablename__ = 'respuesta'
@@ -151,7 +154,8 @@ class Respuesta(db.Model, Entity):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     texto = db.Column(db.String(255), nullable=False)
     id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
-    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
+    id_usuario = db.Column(db.Integer, db.ForeignKey(
+        Usuario.__table__.c['id']))
 
     def __init__(self, texto, valor, id_opcion, id_usuario, created_by):
         Entity.__init__(self, created_by)

@@ -5,6 +5,7 @@
 from project import db
 from .entity import Entity
 
+
 class Departamento(db.Model, Entity):
 
     __tablename__ = 'departamento'
@@ -21,6 +22,7 @@ class Departamento(db.Model, Entity):
             "id": self.id,
             "nombre": self.nombre
         }
+
 
 class Provincia(db.Model, Entity):
 
@@ -43,6 +45,7 @@ class Provincia(db.Model, Entity):
             "id_departamento": self.id_departamento
         }
 
+
 class Distrito(db.Model, Entity):
 
     __tablename__ = 'distrito'
@@ -63,6 +66,7 @@ class Distrito(db.Model, Entity):
             "nombre": self.nombre,
             "id_provincia": self.id_provincia
         }
+
 
 class Persona(db.Model, Entity):
     __tablename__ = 'persona'
@@ -104,8 +108,8 @@ class Persona(db.Model, Entity):
             "colegio": self.colegio,
             "celular": self.celular,
             "ano_estudio": self.ano_estudio,
-            "id_distrito": self.id_distrito
-#            "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
+            "id_distrito": self.id_distrito,
+            # "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
         }
 
 

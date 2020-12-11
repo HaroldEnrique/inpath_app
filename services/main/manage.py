@@ -47,109 +47,111 @@ def test():
 def seed_db():
     """Siembra la base de datos."""
 
-    db.session.add(TipoEncuesta(
-        nombre="tipo_academico",
-        created_by="seed script"))
+    # db.session.add(TipoEncuesta(
+    #     nombre="tipo_academico",
+    #     created_by="seed script"))
 
-    db.session.add(TipoEncuesta(
-        nombre="tipo_vocacional",
-        created_by="seed script"))
+    # db.session.add(TipoEncuesta(
+    #     nombre="tipo_vocacional",
+    #     created_by="seed script"))
     
-    db.session.commit()
+    # db.session.commit()
 
-    db.session.add(Encuesta(
-        nombre="Academico 3 anho",
-        descripcion="aplicado para Buen Pastor",
-        estado=1,
-        id_tipo_encuesta=1,
-        created_by="seed script"
-    ))
+    # db.session.add(Encuesta(
+    #     nombre="Academico 3 anho",
+    #     descripcion="aplicado para Buen Pastor",
+    #     estado=1,
+    #     id_tipo_encuesta=1,
 
-    db.session.add(Encuesta(
-        nombre="Academico 2 anho",
-        descripcion="aplicado para Canto Rey",
-        estado=0,
-        id_tipo_encuesta=1,
-        created_by="seed script"
-    ))
+    #     created_by="seed script"
+    # ))
 
-    db.session.commit()
+    # db.session.add(Encuesta(
+    #     nombre="Academico 2 anho",
+    #     descripcion="aplicado para Canto Rey",
+    #     estado=0,
+    #     id_tipo_encuesta=1,
+    #     created_by="seed script"
+    # ))
 
-    db.session.add(TipoPregunta(
-        tipo="respuesta corta",
+    # db.session.commit()
 
-        created_by="seed script"))
+    # db.session.add(TipoPregunta(
+    #     tipo="respuesta corta",
 
-    db.session.add(TipoPregunta(
-        tipo="varias opciones",
-        created_by="seed script"))
+    #     created_by="seed script"))
 
-    db.session.commit()
+    # db.session.add(TipoPregunta(
+    #     tipo="varias opciones",
+    #     created_by="seed script"))
 
-    db.session.add(Pregunta(
-        pregunta="¿Cual es tu apellido?",
-        tamanho = 50,
-        id_tipo_pregunta = 1,
-        id_test = 1,
-        created_by="seed script"))
+    # db.session.commit()
 
-    db.session.add(Pregunta(
-        pregunta="¿Cual es tu nombre?",
-        tamanho = 50,
-        id_tipo_pregunta = 1,
-        id_test = 1,
-        created_by="seed script"))
+    # db.session.add(Pregunta(
+    #     pregunta="¿Cual es tu apellido?",
+    #     tamanho = 50,
+    #     id_tipo_pregunta = 1,
+    #     id_test = 1,
+    #     created_by="seed script"))
 
-    db.session.add(Pregunta(
-        pregunta="¿Tuviste algún problema de salud?",
-        tamanho = 50,
-        id_tipo_pregunta = 1,
-        id_test = 1,
-        created_by="seed script"))
+    # db.session.add(Pregunta(
+    #     pregunta="¿Cual es tu nombre?",
+    #     tamanho = 50,
+    #     id_tipo_pregunta = 1,
+    #     id_test = 1,
+    #     created_by="seed script"))
+
+    # db.session.add(Pregunta(
+    #     pregunta="¿Tuviste algún problema de salud?",
+    #     tamanho = 50,
+    #     id_tipo_pregunta = 1,
+    #     id_test = 1,
+    #     created_by="seed script"))
     
-    db.session.commit()
+    # db.session.commit()
 
-    db.session.add(Opcion(
-        texto="Nunca",
-        id_pregunta = 3,
-        created_by="seed script"))
+    # db.session.add(Opcion(
+    #     texto="Nunca",
+    #     valor=1,
+    #     id_pregunta = 3,
+    #     created_by="seed script"))
 
-    db.session.add(Opcion(
-        texto="Tal vez",
-        id_pregunta = 3,
-        created_by="seed script"))
+    # db.session.add(Opcion(
+    #     texto="Tal vez",
+    #     valor=2,
+    #     id_pregunta = 3,
+    #     created_by="seed script"))
 
-    db.session.add(Opcion(
-        texto="Siempre",
-        id_pregunta = 3,
-        created_by="seed script"))
+    # db.session.add(Opcion(
+    #     texto="Siempre",
+    #     valor=3,
+    #     id_pregunta = 3,
+    #     created_by="seed script"))
 
-    db.session.commit()
+    # db.session.commit()
 
-    db.session.add(Persona(
-        nombres="Carlos Tito",
-        ape_paterno="Covid",
-        ape_materno="2020",
-        tipo_doc="dni",
-        doc=543543,
-        correo="covid@gmail.com",
-        colegio="colegio",
-        celular=123123123,
-        fecha_nac=datetime.utcnow(),
-        created_by="seed script"))
-    db.session.add(Persona(
-        nombres="Norma Luccia",
-        ape_paterno="Covid",
-        ape_materno="2020",
-        tipo_doc="dni",
-        doc=543543,
-        correo="norma@gmail.com",
-        colegio="colegio2",
-        celular=654654654,
-        fecha_nac=datetime.utcnow(),
-        created_by="seed script"))
+    # db.session.add(Persona(
+    #     nombres="Carlos Tito",
+    #     apellidos="Covid 2020",
+    #     tipo_doc="dni",
+    #     doc=543543,
+    #     correo="covid@gmail.com",
+    #     colegio="colegio",
+    #     celular=123123123,
+        
+    #     created_by="seed script"))
+    # db.session.add(Persona(
+    #     nombres="Norma Luccia",
+    #     apellidos="Covid 2020",
+    #     tipo_doc="dni",
+    #     doc=543543,
+    #     correo="norma@gmail.com",
+    #     colegio="colegio2",
+    #     celular=654654654,
+    #     fecha_nac=datetime.utcnow(),
+    #     created_by="seed script"))
 
-    db.session.commit()
+    # db.session.commit()
 
 
 @cli.command()

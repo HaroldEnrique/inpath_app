@@ -31,14 +31,14 @@ class PersonasList(Resource):
             return response_object, 400
 
         nombres = post_data.get('nombres')
-        ape_paterno = post_data.get('ape_paterno')
-        ape_materno = post_data.get('ape_materno')
+        apellidos = post_data.get('apellidos')
         tipo_doc = post_data.get('tipo_doc')
         doc = post_data.get('doc')
         correo = post_data.get('correo')
         colegio = post_data.get('colegio')
         celular = post_data.get('celular')
-        fecha_nac = post_data.get('fecha_nac')
+        ano_estudio = post_data.get('ano_estudio')
+        id_distrito = post_data.get('id_distrito')
         created_by = post_data.get('created_by')
 
         try:
@@ -46,14 +46,14 @@ class PersonasList(Resource):
             if not person:
                 db.session.add(Persona(
                     nombres=nombres,
-                    ape_paterno=ape_paterno,
-                    ape_materno=ape_materno,
+                    apellidos=apellidos,
                     tipo_doc=tipo_doc,
                     doc=doc,
                     correo=correo,
                     colegio=colegio,
                     celular=celular,
-                    fecha_nac=fecha_nac,
+                    ano_estudio=ano_estudio,
+                    id_distrito=id_distrito,
                     created_by=created_by
                 ))
                 db.session.commit()
