@@ -4,6 +4,7 @@
 from project import db
 from .entity import Entity
 
+
 class Carrera(db.Model, Entity):
     __tablename__ = 'carrera'
 
@@ -20,10 +21,7 @@ class Carrera(db.Model, Entity):
         return {
             "id": self.id,
             "nombre": self.nombre,
-            "descripcion": self.descripcion,
-            "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "updated_at": self.updated_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "last_updated_by": self.last_updated_by
+            "descripcion": self.descripcion
         }
 
 
@@ -43,11 +41,9 @@ class TipoPerfil(db.Model, Entity):
         return {
             "id": self.id,
             "nombre": self.nombre,
-            "descripcion": self.descripcion,
-            "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "updated_at": self.updated_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "last_updated_by": self.last_updated_by
+            "descripcion": self.descripcion
         }
+
 
 class PerfilCarrera(db.Model, Entity):
 

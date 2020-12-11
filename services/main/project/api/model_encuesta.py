@@ -5,6 +5,7 @@
 from project import db
 from .entity import Entity
 from .model_usuarios import Usuario
+from project.api.model_perfil import TipoPerfil
 
 class TipoEncuesta(db.Model, Entity):
 
@@ -34,17 +35,20 @@ class Encuesta(db.Model, Entity):
     nombre = db.Column(db.String(255), nullable=False)
     descripcion = db.Column(db.String(255), nullable=False)
     estado = db.Column(db.Integer, nullable=False)
+    id_psicologo = db.Column(db.Integer,
+                             db.ForeignKey(Usuario.__table__.c['id']))
     id_tipo_encuesta = db.Column(db.Integer,
                                  db.ForeignKey(TipoEncuesta.__table__.c['id']))
     preguntas = db.relationship('Pregunta',
                                 backref=db.backref('encuesta', lazy=True))
 
-    def __init__(self, nombre, descripcion, estado,
+    def __init__(self, nombre, descripcion, estado, id_psicologo,
                  id_tipo_encuesta, created_by):
         Entity.__init__(self, created_by)
         self.nombre = nombre
         self.descripcion = descripcion
         self.estado = estado
+        self.id_psicologo = id_psicologo
         self.id_tipo_encuesta = id_tipo_encuesta
 
     def to_json(self):
@@ -53,6 +57,7 @@ class Encuesta(db.Model, Entity):
             "nombre": self.nombre,
             "descripcion": self.descripcion,
             "estado": self.estado,
+            "id_psicologo": self.id_psicologo,
             "id_tipo_encuesta": self.id_tipo_encuesta
         }
 
@@ -89,17 +94,20 @@ class Pregunta(db.Model, Entity):
     tamanho = db.Column(db.String(255), nullable=False)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
-    id_test = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
+    id_encuesta = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
+    id_tipo_perfil = db.Column(db.Integer,
+                               db.ForeignKey(TipoPerfil.__table__.c['id']))
     opciones = db.relationship('Opcion',
                                backref=db.backref('pregunta', lazy=True))
 
     def __init__(self, pregunta, tamanho, id_tipo_pregunta,
-                 id_test, created_by):
+                 id_encuesta, id_tipo_perfil, created_by):
         Entity.__init__(self, created_by)
         self.pregunta = pregunta
         self.tamanho = tamanho
         self.id_tipo_pregunta = id_tipo_pregunta
-        self.id_test = id_test
+        self.id_encuesta = id_encuesta
+        self.id_tipo_perfil = id_tipo_perfil
 
     def to_json(self):
         return {
@@ -107,7 +115,8 @@ class Pregunta(db.Model, Entity):
             "pregunta": self.pregunta,
             "tamanho": self.tamanho,
             "id_tipo_pregunta": self.id_tipo_pregunta,
-            "id_test": self.id_test
+            "id_encuesta": self.id_encuesta,
+            "id_tipo_perfil": self.id_tipo_perfil
         }
 
 
@@ -121,7 +130,7 @@ class Opcion(db.Model, Entity):
     id_pregunta = db.Column(db.Integer, db.ForeignKey(
         Pregunta.__table__.c['id']))
 
-    def __init__(self, texto, id_pregunta, created_by):
+    def __init__(self, texto, valor, id_pregunta, created_by):
         Entity.__init__(self, created_by)
         self.texto = texto,
         self.valor = valor,
@@ -141,11 +150,10 @@ class Respuesta(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     texto = db.Column(db.String(255), nullable=False)
-    valor = db.Column(db.String(255), nullable=False)
     id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
     id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
 
-    def __init__(self, texto, id_pregunta, created_by):
+    def __init__(self, texto, valor, id_opcion, id_usuario, created_by):
         Entity.__init__(self, created_by)
         self.texto = texto
         self.valor = valor

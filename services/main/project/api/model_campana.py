@@ -5,6 +5,7 @@ from project import db
 from .entity import Entity
 from project.api.model_encuesta import Encuesta
 
+
 class Campana(db.Model, Entity):
     __tablename__ = 'campana'
 
