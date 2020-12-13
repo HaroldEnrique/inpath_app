@@ -126,7 +126,7 @@ class Opcion(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     texto = db.Column(db.String(255), nullable=False)
-    valor = db.Column(db.String(255), nullable=False)
+    valor = db.Column(db.Integer, nullable=False)
     id_pregunta = db.Column(db.Integer, db.ForeignKey(
         Pregunta.__table__.c['id']))
 
