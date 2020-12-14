@@ -78,7 +78,7 @@ class Persona(db.Model, Entity):
     celular = db.Column(db.Integer, nullable=False)
     fecha_nac = db.Column(db.Date, nullable=False)
     id_distrito = db.Column(
-        db.Integer, db.ForeignKey(Persona.__table__.c['id']))
+        db.Integer, db.ForeignKey(Distrito.__table__.c['id']))
     # created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     def __init__(self, nombres, ape_paterno, ape_materno, tipo_doc, doc,

@@ -77,11 +77,12 @@ def seed_db():
 
     db.session.add(TipoPregunta(
         tipo="respuesta corta",
-
+        tamanho = 50,
         created_by="seed script"))
 
     db.session.add(TipoPregunta(
         tipo="varias opciones",
+        tamanho = 50,
         created_by="seed script"))
 
     db.session.commit()
@@ -96,6 +97,7 @@ def seed_db():
     db.session.add(Pregunta(
         pregunta="¿Cual es tu nombre?",
         tamanho = 50,
+        id_tipo_perfil = 1,
         id_tipo_pregunta = 1,
         id_test = 1,
         created_by="seed script"))
@@ -111,16 +113,19 @@ def seed_db():
 
     db.session.add(Opcion(
         texto="Nunca",
+        valor=1,
         id_pregunta = 3,
         created_by="seed script"))
 
     db.session.add(Opcion(
         texto="Tal vez",
+        valor=2,
         id_pregunta = 3,
         created_by="seed script"))
 
     db.session.add(Opcion(
         texto="Siempre",
+        valor=3,
         id_pregunta = 3,
         created_by="seed script"))
 

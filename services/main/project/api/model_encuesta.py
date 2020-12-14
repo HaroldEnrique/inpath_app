@@ -87,17 +87,19 @@ class Pregunta(db.Model, Entity):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pregunta = db.Column(db.String(255), nullable=False)
     tamanho = db.Column(db.String(255), nullable=False)
+    id_tipo_perfil= db.Column(db.Integer, nullable=False)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
     id_test = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
     opciones = db.relationship('Opcion',
                                backref=db.backref('pregunta', lazy=True))
 
-    def __init__(self, pregunta, tamanho, id_tipo_pregunta,
+    def __init__(self, pregunta, tamanho,id_tipo_perfil, id_tipo_pregunta,
                  id_test, created_by):
         Entity.__init__(self, created_by)
         self.pregunta = pregunta
         self.tamanho = tamanho
+        self.id_tipo_perfil = id_tipo_perfil
         self.id_tipo_pregunta = id_tipo_pregunta
         self.id_test = id_test
 
@@ -106,6 +108,7 @@ class Pregunta(db.Model, Entity):
             "id": self.id,
             "pregunta": self.pregunta,
             "tamanho": self.tamanho,
+            "id_tipo_perfil": self.id_tipo_perfil,
             "id_tipo_pregunta": self.id_tipo_pregunta,
             "id_test": self.id_test
         }
@@ -117,11 +120,13 @@ class Opcion(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     texto = db.Column(db.String(255), nullable=False)
-    valor = db.Column(db.String(255), nullable=False)
+    valor = db.Column(db.Integer, nullable=False)
     id_pregunta = db.Column(db.Integer, db.ForeignKey(
         Pregunta.__table__.c['id']))
+    respuestas = db.relationship('Respuesta',
+                               backref=db.backref('opcion', lazy=True))
 
-    def __init__(self, texto, id_pregunta, created_by):
+    def __init__(self, texto,valor, id_pregunta, created_by):
         Entity.__init__(self, created_by)
         self.texto = texto,
         self.valor = valor,
@@ -140,23 +145,49 @@ class Respuesta(db.Model, Entity):
     __tablename__ = 'respuesta'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    texto = db.Column(db.String(255), nullable=False)
-    valor = db.Column(db.String(255), nullable=False)
     id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
     id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
 
-    def __init__(self, texto, id_pregunta, created_by):
+    def __init__(self, id_opcion, id_usuario, created_by):
         Entity.__init__(self, created_by)
-        self.texto = texto
-        self.valor = valor
         self.id_opcion = id_opcion
         self.id_usuario = id_usuario
 
     def to_json(self):
         return {
             "id": self.id,
-            "texto": self.texto,
-            "valor": self.valor,
             "id_opcion": self.id_opcion,
             "id_usuario": self.id_usuario
+        }
+
+class Resultado(db.Model, Entity):
+
+    __tablename__ = 'resultado'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    valor = db.Column(db.Integer, nullable=False)
+    estado = db.Column(db.Integer, nullable=False)
+    etiqueta_ia = db.Column(db.String(255), nullable=False)
+    id_tipo_perfil = db.Column(db.Integer, nullable=False)
+    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
+    id_test = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
+
+    def __init__(self, valor, estado, etiqueta_ia, id_tipo_perfil, id_usuario, id_test, created_by):
+        Entity.__init__(self, created_by)
+        self.valor = valor
+        self.estado = estado
+        self.etiqueta_ia = etiqueta_ia
+        self.id_tipo_perfil = id_tipo_perfil
+        self.id_usuario = id_usuario
+        self.id_test = id_test
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "valor": self.valor,
+            "estado": self.estado,
+            "etiqueta_ia": self.etiqueta_ia,
+            "id_tipo_perfil": self.id_tipo_perfil,
+            "id_usuario": self.id_usuario,
+            "id_test": self.id_test
         }
