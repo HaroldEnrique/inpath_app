@@ -173,48 +173,41 @@ class RespuestaList(Resource):
         
         id_user = post_data.get('id_user')
         id_test = post_data.get('id_test')
-        etiqueta_ia = post_data.get('etiqueta_ia')
         opciones = post_data.get('ids_opciones')
 
         try:
             array_temp = [] 
 
             for i in opciones:
-                opcion = Opcion.query.filter_by(id_opcion=i).first() 
-                id_opcion = opcion.id_opcion
+                opcion = Opcion.query.filter_by(id=i).first() 
+                id_opcion = opcion.id
                 id_pregunta = opcion.id_pregunta
                 texto = opcion.texto 
                 valor = opcion.valor
                 respuesta = Respuesta(
-                    texto=texto
+                    texto=texto,
                     id_opcion=id_opcion,
-                    id_usuario=id_user
+                    id_usuario=id_user,
+                    created_by=id_user
                 )                 
                 db.session.add(respuesta)
                 db.session.flush()
-                pregunta = Pregunta.query.filter_by(id_pregunta=id_pregunta).first() 
-                id_perfil = pregunta['id_tipo_perfil']
+                pregunta = Pregunta.query.filter_by(id=id_pregunta).first() 
+                id_perfil = pregunta.id_tipo_perfil
                 
-                if array_temp: 
-                    for j in array_temp:
-                        if(j['id_perfil']== id_perfil):
-                            j['valor']= j['valor'].astype(str).astype(int) +valor
-                        else:
-                            temporal = temp_a(
-                                id_perfil=id_perfil,
-                                valor=valor,
-                                estado = "0"
-                            ) 
-                            array_temp.append(temporal)
-                else:
-                    temporal = temp_a(
-                        id_perfil=id_perfil,
-                        valor=valor,
-                        estado="0"
-                    ) 
-                    array_temp.append(temporal)
+                temporal = temp_a(
+                    id_perfil=id_perfil,
+                    valor=valor,
+                    estado = "0"
+                ) 
+                array_temp.append(temporal)
 
-            
+                for j in array_temp:
+                    if(j.id_perfil== id_perfil):
+                        j.valor= j.valor +valor
+
+            print(str(len(array_temp)))
+
             i = 0
             while i<len(array_temp):
                 j = 0
@@ -222,19 +215,18 @@ class RespuestaList(Resource):
                 while j <len(array_temp):
                     if array_temp[i].valor >= array_temp[j].valor:
                         result=result+1
-                    
-                    j=j+1
+                    j+=1
                 
                 if result == len(array_temp):
                     array_temp[i].estado = "1"
-
-                i=i+1
+                i+=1
                 
             for k in array_temp:
                 resultado = Resultado(
-                    valor = k['valor'] ,
-                    estado = k['estado'] , 
-                    etiqueta_ia=etiqueta_ia,
+                    valor = k.valor ,
+                    estado = k.estado , 
+                    etiqueta_ia=None,
+                    id_tipo_perfil = k.id_perfil,
                     id_usuario=id_user,
                     id_test=id_test,
                     created_by=id_user

@@ -92,7 +92,7 @@ class Pregunta(db.Model, Entity):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pregunta = db.Column(db.String(255), nullable=False)
     tamanho = db.Column(db.String(255), nullable=False)
-    id_tipo_perfil= db.Column(db.Integer, nullable=False)
+    id_tipo_perfil= db.Column(db.Integer)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
     id_encuesta = db.Column(db.Integer,
@@ -152,7 +152,7 @@ class Respuesta(db.Model, Entity):
     __tablename__ = 'respuesta'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    texto = db.Column(db.String(255), nullable=False)
+    texto = db.Column(db.String(255))
     id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
     id_usuario = db.Column(db.Integer, db.ForeignKey(
         Usuario.__table__.c['id']))
@@ -179,8 +179,8 @@ class Resultado(db.Model, Entity):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     valor = db.Column(db.Integer, nullable=False)
     estado = db.Column(db.Integer, nullable=False)
-    etiqueta_ia = db.Column(db.String(255), nullable=False)
-    id_tipo_perfil = db.Column(db.Integer, nullable=False)
+    etiqueta_ia = db.Column(db.String(255))
+    id_tipo_perfil = db.Column(db.Integer)
     id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
     id_test = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
 
