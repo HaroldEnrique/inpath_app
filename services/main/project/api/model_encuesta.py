@@ -92,7 +92,7 @@ class Pregunta(db.Model, Entity):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pregunta = db.Column(db.String(255), nullable=False)
     tamanho = db.Column(db.String(255), nullable=False)
-    id_tipo_perfil= db.Column(db.Integer)
+    id_tipo_perfil = db.Column(db.Integer)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
     id_encuesta = db.Column(db.Integer,
@@ -100,8 +100,8 @@ class Pregunta(db.Model, Entity):
     opciones = db.relationship('Opcion',
                                backref=db.backref('pregunta', lazy=True))
 
-    def __init__(self, pregunta, tamanho,id_tipo_perfil, id_tipo_pregunta,
-                 id_test, created_by):
+    def __init__(self, pregunta, tamanho, id_tipo_perfil, id_tipo_pregunta,
+                 id_encuesta, created_by):
         Entity.__init__(self, created_by)
         self.pregunta = pregunta
         self.tamanho = tamanho
@@ -130,9 +130,9 @@ class Opcion(db.Model, Entity):
     id_pregunta = db.Column(db.Integer, db.ForeignKey(
         Pregunta.__table__.c['id']))
     respuestas = db.relationship('Respuesta',
-                               backref=db.backref('opcion', lazy=True))
+                                 backref=db.backref('opcion', lazy=True))
 
-    def __init__(self, texto,valor, id_pregunta, created_by):
+    def __init__(self, texto, valor, id_pregunta, created_by):
         Entity.__init__(self, created_by)
         self.texto = texto,
         self.valor = valor,
@@ -159,7 +159,7 @@ class Respuesta(db.Model, Entity):
 
     def __init__(self, texto, id_opcion, id_usuario, created_by):
         Entity.__init__(self, created_by)
-        
+
         self.texto = texto
         self.id_opcion = id_opcion
         self.id_usuario = id_usuario
@@ -172,6 +172,7 @@ class Respuesta(db.Model, Entity):
             "id_usuario": self.id_usuario
         }
 
+
 class Resultado(db.Model, Entity):
 
     __tablename__ = 'resultado'
@@ -181,10 +182,13 @@ class Resultado(db.Model, Entity):
     estado = db.Column(db.Integer, nullable=False)
     etiqueta_ia = db.Column(db.String(255))
     id_tipo_perfil = db.Column(db.Integer)
-    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
-    id_test = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
+    id_usuario = db.Column(db.Integer, db.ForeignKey(
+        Usuario.__table__.c['id']))
+    id_test = db.Column(db.Integer, db.ForeignKey(
+        Encuesta.__table__.c['id']))
 
-    def __init__(self, valor, estado, etiqueta_ia, id_tipo_perfil, id_usuario, id_test, created_by):
+    def __init__(self, valor, estado, etiqueta_ia, id_tipo_perfil,
+                 id_usuario, id_test, created_by):
         Entity.__init__(self, created_by)
         self.valor = valor
         self.estado = estado
