@@ -6,6 +6,7 @@ from project import db
 from .entity import Entity
 from .model_usuarios import Usuario
 
+
 class TipoEncuesta(db.Model, Entity):
 
     __tablename__ = 'tipo_encuesta'
@@ -34,17 +35,20 @@ class Encuesta(db.Model, Entity):
     nombre = db.Column(db.String(255), nullable=False)
     descripcion = db.Column(db.String(255), nullable=False)
     estado = db.Column(db.Integer, nullable=False)
+    id_psicologo = db.Column(db.Integer,
+                             db.ForeignKey(Usuario.__table__.c['id']))
     id_tipo_encuesta = db.Column(db.Integer,
                                  db.ForeignKey(TipoEncuesta.__table__.c['id']))
     preguntas = db.relationship('Pregunta',
                                 backref=db.backref('encuesta', lazy=True))
 
-    def __init__(self, nombre, descripcion, estado,
+    def __init__(self, nombre, descripcion, estado, id_psicologo,
                  id_tipo_encuesta, created_by):
         Entity.__init__(self, created_by)
         self.nombre = nombre
         self.descripcion = descripcion
         self.estado = estado
+        self.id_psicologo = id_psicologo
         self.id_tipo_encuesta = id_tipo_encuesta
 
     def to_json(self):
@@ -53,6 +57,7 @@ class Encuesta(db.Model, Entity):
             "nombre": self.nombre,
             "descripcion": self.descripcion,
             "estado": self.estado,
+            "id_psicologo": self.id_psicologo,
             "id_tipo_encuesta": self.id_tipo_encuesta
         }
 
@@ -63,11 +68,11 @@ class TipoPregunta(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tipo = db.Column(db.String(255), nullable=False)
-    tamanho = db.Column(db.String(255), nullable=False)
+    tamanho = db.Column(db.String(255), nullable=True)
     preguntas = db.relationship('Pregunta',
                                 backref=db.backref('tipo_pregunta', lazy=True))
 
-    def __init__(self, tipo,tamanho, created_by):
+    def __init__(self, tipo, tamanho, created_by):
         Entity.__init__(self, created_by)
         self.tipo = tipo
         self.tamanho = tamanho
@@ -76,7 +81,7 @@ class TipoPregunta(db.Model, Entity):
         return {
             "id": self.id,
             "tipo": self.tipo,
-            "tamanho":self.tamanho
+            "tamanho": self.tamanho
         }
 
 
@@ -90,7 +95,8 @@ class Pregunta(db.Model, Entity):
     id_tipo_perfil= db.Column(db.Integer, nullable=False)
     id_tipo_pregunta = db.Column(db.Integer,
                                  db.ForeignKey(TipoPregunta.__table__.c['id']))
-    id_test = db.Column(db.Integer, db.ForeignKey(Encuesta.__table__.c['id']))
+    id_encuesta = db.Column(db.Integer,
+                            db.ForeignKey(Encuesta.__table__.c['id']))
     opciones = db.relationship('Opcion',
                                backref=db.backref('pregunta', lazy=True))
 
@@ -101,7 +107,7 @@ class Pregunta(db.Model, Entity):
         self.tamanho = tamanho
         self.id_tipo_perfil = id_tipo_perfil
         self.id_tipo_pregunta = id_tipo_pregunta
-        self.id_test = id_test
+        self.id_encuesta = id_encuesta
 
     def to_json(self):
         return {
@@ -110,7 +116,7 @@ class Pregunta(db.Model, Entity):
             "tamanho": self.tamanho,
             "id_tipo_perfil": self.id_tipo_perfil,
             "id_tipo_pregunta": self.id_tipo_pregunta,
-            "id_test": self.id_test
+            "id_encuesta": self.id_encuesta,
         }
 
 
@@ -140,22 +146,28 @@ class Opcion(db.Model, Entity):
             "id_pregunta": self.id_pregunta
         }
 
+
 class Respuesta(db.Model, Entity):
 
     __tablename__ = 'respuesta'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    texto = db.Column(db.String(255), nullable=False)
     id_opcion = db.Column(db.Integer, db.ForeignKey(Opcion.__table__.c['id']))
-    id_usuario = db.Column(db.Integer, db.ForeignKey(Usuario.__table__.c['id']))
+    id_usuario = db.Column(db.Integer, db.ForeignKey(
+        Usuario.__table__.c['id']))
 
-    def __init__(self, id_opcion, id_usuario, created_by):
+    def __init__(self, texto, id_opcion, id_usuario, created_by):
         Entity.__init__(self, created_by)
+        
+        self.texto = texto
         self.id_opcion = id_opcion
         self.id_usuario = id_usuario
 
     def to_json(self):
         return {
             "id": self.id,
+            "texto": self.texto,
             "id_opcion": self.id_opcion,
             "id_usuario": self.id_usuario
         }

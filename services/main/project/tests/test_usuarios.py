@@ -9,7 +9,7 @@ from project import db
 from project.api.model_usuarios import Persona
 
 # just for testing
-from datetime import datetime
+# from datetime import datetime
 # from sqlalchemy.sql import func
 
 # def myconverter(o):
@@ -17,18 +17,18 @@ from datetime import datetime
 #         return o.__str__()
 
 
-def add_persona(nombres, ape_paterno, ape_materno, tipo_doc, doc,
-                correo, colegio, celular, fecha_nac, created_by):
+def add_persona(nombres, apellidos, tipo_doc, doc, correo,
+                colegio, celular, ano_estudio, id_distrito, created_by):
     persona = Persona(
         nombres=nombres,
-        ape_paterno=ape_paterno,
-        ape_materno=ape_materno,
+        apellidos=apellidos,
         tipo_doc=tipo_doc,
         doc=doc,
         correo=correo,
         colegio=colegio,
         celular=celular,
-        fecha_nac=fecha_nac,
+        ano_estudio=ano_estudio,
+        id_distrito=id_distrito,
         created_by=created_by)
 
     db.session.add(persona)
@@ -54,14 +54,14 @@ class TestUsuarioService(BaseTestCase):
                 '/personas',
                 data=json.dumps({
                     'nombres': 'nicole.garcia',
-                    'ape_paterno': 'Da silva',
-                    'ape_materno': 'Ramirez',
+                    'apellidos': 'Da silva Ramirez',
                     'tipo_doc': 'dni',
                     'doc': 123123,
                     'correo': 'nicole.garcia@gmail.com',
                     'colegio': 'IE 164',
                     'celular': 127543578,
-                    'fecha_nac': datetime.utcnow().__str__(),
+                    'ano_estudio': 3,
+                    'id_distrito': 1,
                     'created_by': 'test_script'
                 }),
                 content_type='application/json',
@@ -111,14 +111,14 @@ class TestUsuarioService(BaseTestCase):
                 '/personas',
                 data=json.dumps({
                     'nombres': 'nicole.garcia',
-                    'ape_paterno': 'Da silva',
-                    'ape_materno': 'Ramirez',
+                    'apellidos': 'Da silva Ramirez',
                     'tipo_doc': 'dni',
                     'doc': 123123,
                     'correo': 'nicole.garcia@gmail.com',
                     'colegio': 'IE 164',
                     'celular': 127543578,
-                    'fecha_nac': datetime.utcnow().__str__(),
+                    'ano_estudio': 3,
+                    'id_distrito': 1,
                     'created_by': 'test_script'
                 }),
                 content_type='application/json',
@@ -127,14 +127,14 @@ class TestUsuarioService(BaseTestCase):
                 '/personas',
                 data=json.dumps({
                     'nombres': 'nicole.garcia',
-                    'ape_paterno': 'Da silva',
-                    'ape_materno': 'Ramirez',
+                    'apellidos': 'Da silva Ramirez',
                     'tipo_doc': 'dni',
                     'doc': 123123,
                     'correo': 'nicole.garcia@gmail.com',
                     'colegio': 'IE 164',
                     'celular': 127543578,
-                    'fecha_nac': datetime.utcnow().__str__(),
+                    'ano_estudio': 3,
+                    'id_distrito': 1,
                     'created_by': 'test_script'
                 }),
                 content_type='application/json',
@@ -147,9 +147,9 @@ class TestUsuarioService(BaseTestCase):
 
     def test_single_persona(self):
         """Ensure get single user behaves correctly."""
-        persona = add_persona('nombres', 'ape_paterno', 'ape_materno',
-                              'tipo_doc', 654654654, 'correo@gmail.com',
-                              'colegio', 765765765, datetime.utcnow(),
+        persona = add_persona('nombres', 'apellidos', 'tipo_doc',
+                              654654654, 'correo@gmail.com',
+                              'colegio', 765765765, 2, 1,
                               'test_script')
         with self.client:
             response = self.client.get(f'/personas/{persona.id}')
@@ -180,15 +180,15 @@ class TestUsuarioService(BaseTestCase):
     def test_all_personas(self):
         """Asegúrese de que todos los usuarios se comporten correctamente."""
 
-        add_persona('luccia', 'gamarra', 'perez', 'passport', 654654654,
+        add_persona('luccia', 'gamarra perez', 'dni', 654654654,
                     'luccia@gmail.com', 'colegio1', 765765765,
-                    datetime.utcnow(), 'test_script')
-        add_persona('nicole', 'gamarra', 'perez', 'dni', 654654654,
+                    4, 1, 'test_script')
+        add_persona('nicole', 'gamarra perez', 'dni', 654654654,
                     'nicole@gmail.com', 'colegio2', 765765765,
-                    datetime.utcnow(), 'test_script')
-        add_persona('julian', 'gamarra', 'perez', 'dni', 654654654,
+                    4, 1, 'test_script')
+        add_persona('julian', 'gamarra perez', 'dni', 654654654,
                     'julian@gmail.com', 'colegio3', 765765765,
-                    datetime.utcnow(), 'test_script')
+                    4, 1, 'test_script')
 
         with self.client:
             response = self.client.get('/personas')

@@ -5,6 +5,7 @@
 from project import db
 from .entity import Entity
 
+
 class Departamento(db.Model, Entity):
 
     __tablename__ = 'departamento'
@@ -22,6 +23,7 @@ class Departamento(db.Model, Entity):
             "nombre": self.nombre
         }
 
+
 class Provincia(db.Model, Entity):
 
     __tablename__ = 'provincia'
@@ -34,7 +36,7 @@ class Provincia(db.Model, Entity):
     def __init__(self, nombre, id_departamento, created_by):
         Entity.__init__(self, created_by)
         self.nombre = nombre
-        self.id_provincia = id_provincia
+        self.id_departamento = id_departamento
 
     def to_json(self):
         return {
@@ -42,6 +44,7 @@ class Provincia(db.Model, Entity):
             "nombre": self.nombre,
             "id_departamento": self.id_departamento
         }
+
 
 class Distrito(db.Model, Entity):
 
@@ -64,51 +67,49 @@ class Distrito(db.Model, Entity):
             "id_provincia": self.id_provincia
         }
 
+
 class Persona(db.Model, Entity):
     __tablename__ = 'persona'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombres = db.Column(db.String(255), nullable=False)
-    ape_paterno = db.Column(db.String(255), nullable=False)
-    ape_materno = db.Column(db.String(255), nullable=False)
+    apellidos = db.Column(db.String(255), nullable=False)
     tipo_doc = db.Column(db.String(255), nullable=False)
     doc = db.Column(db.Integer, nullable=False)
     correo = db.Column(db.String(255), nullable=False)
     colegio = db.Column(db.String(255), nullable=False)
     celular = db.Column(db.Integer, nullable=False)
-    fecha_nac = db.Column(db.Date, nullable=False)
+    ano_estudio = db.Column(db.Integer, nullable=False)
     id_distrito = db.Column(
         db.Integer, db.ForeignKey(Distrito.__table__.c['id']))
     # created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
-    def __init__(self, nombres, ape_paterno, ape_materno, tipo_doc, doc,
-                 correo, colegio, celular, fecha_nac, created_by):
+    def __init__(self, nombres, apellidos, tipo_doc, doc, correo,
+                 colegio, celular, ano_estudio, id_distrito, created_by):
         Entity.__init__(self, created_by)
         self.nombres = nombres
-        self.ape_paterno = ape_paterno
-        self.ape_materno = ape_materno
+        self.apellidos = apellidos
         self.tipo_doc = tipo_doc
         self.doc = doc
         self.correo = correo
         self.colegio = colegio
         self.celular = celular
-        self.fecha_nac = fecha_nac
+        self.ano_estudio = ano_estudio
+        self.id_distrito = id_distrito
 
     def to_json(self):
         return {
             "id": self.id,
             "nombres": self.nombres,
-            "ape_materno": self.ape_materno,
-            "ape_paterno": self.ape_paterno,
+            "apellidos": self.apellidos,
             "tipo_doc": self.tipo_doc,
             "doc": self.doc,
             "correo": self.correo,
             "colegio": self.colegio,
             "celular": self.celular,
-            "fecha_nac": self.fecha_nac.strftime('%Y-%m-%dT%H:%M:%S'),
-            "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "updated_at": self.updated_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            "last_updated_by": self.last_updated_by
+            "ano_estudio": self.ano_estudio,
+            "id_distrito": self.id_distrito,
+            # "created_at": self.created_at.strftime('%Y-%m-%dT%H:%M:%S'),
         }
 
 
@@ -146,7 +147,7 @@ class Rol(db.Model, Entity):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(255), nullable=False)
-    descripcion = db.Column(db.String(255), nullable=False)
+    descripcion = db.Column(db.String(255), nullable=True)
     estado = db.Column(db.Integer, nullable=False)
 
     def __init__(self, nombre, descripcion, estado, created_by):

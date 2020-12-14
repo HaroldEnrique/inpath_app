@@ -181,11 +181,13 @@ class RespuestaList(Resource):
 
             for i in opciones:
                 opcion = Opcion.query.filter_by(id_opcion=i).first() 
+                id_opcion = opcion.id_opcion
                 id_pregunta = opcion.id_pregunta
                 texto = opcion.texto 
                 valor = opcion.valor
                 respuesta = Respuesta(
-                    id_opcion=texto,
+                    texto=texto
+                    id_opcion=id_opcion,
                     id_usuario=id_user
                 )                 
                 db.session.add(respuesta)
