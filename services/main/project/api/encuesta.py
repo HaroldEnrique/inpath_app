@@ -1,10 +1,11 @@
 # coding=utf-8
 # services/main/project/api/encuesta.pyF
-
+import json
 from flask_restful import Resource, Api
 from flask import Blueprint, request
 from sqlalchemy import exc
 from project import db
+from project.api.model_perfil import TipoPerfil, PerfilCarrera,Carrera
 from project.api.model_encuesta import TipoPregunta, Pregunta, Resultado
 from project.api.model_encuesta import TipoEncuesta, Encuesta, Opcion, Respuesta
 
@@ -25,31 +26,56 @@ class EncuestaList(Resource):
     def get(self):
         """Listar Config Test"""
 
-        q = db.session.query(TipoEncuesta, Encuesta, TipoPregunta,
-                             Pregunta, Opcion).filter(
-                    TipoEncuesta.id == Encuesta.id_tipo_encuesta,
-                    Encuesta.id == Pregunta.id_test,
-                    TipoPregunta.id == Pregunta.id_tipo_pregunta,
-                    Pregunta.id == Opcion.id_pregunta).all()
+        data = []
+        tipo_encuesta = db.session.query(TipoEncuesta).all()
+        
+        for i in tipo_encuesta:
+            encuestas = []
+            content_tipo_encuesta = {}
+            content_tipo_encuesta['tipo_test_nombre']= i.nombre
+            encuesta = Encuesta.query.filter_by(id_tipo_encuesta=i.id).all() 
 
-        lista = []
-        for i in q:
-            dict_tipo_encuesta = i[0].to_json()
-            dict_encuesta = i[1].to_json()
-            dict_tipo_pregunta = i[2].to_json()
-            dict_pregunta = i[3].to_json()
-            dict_opcion = i[4].to_json()
+            for j in encuesta:
+                content_encuesta = {}
+                content_encuesta['id_test']= j.id
+                content_encuesta['estado_test']= j.estado
+                content_encuesta['nombre_test']= j.nombre
+                content_encuesta['descripcion_test']= j.descripcion
+                pregunta = Pregunta.query.filter_by(id_encuesta=j.id).all() 
 
-            dict_pregunta["opciones"] = dict_opcion
-            dict_pregunta["tipo_pregunta"] = dict_tipo_pregunta
-            dict_encuesta["pregunta"] = dict_pregunta
-            dict_tipo_encuesta["encuesta"] = dict_encuesta
+                preguntas = []
+                for k in pregunta:
+                    opciones = []
+                    content_pregunta = {}
+                    content_pregunta['id_pregunta']= k.id
+                    content_pregunta['pregunta']= k.pregunta
+                    content_pregunta['id_tipo_pregunta']= k.id_tipo_pregunta
+                    tipo_pregunta = TipoPregunta.query.filter_by(id=k.id_tipo_pregunta).first()     
+                    content_pregunta['nombre_tipo_pregunta']= tipo_pregunta.tipo
+                    if k.id_tipo_pregunta ==1:
+                        content_pregunta['limite_caracteres']= k.limite_caracteres  
+                    else:
+                        opcion = Opcion.query.filter_by(id_pregunta=k.id_tipo_pregunta).all()
+                        for l in opcion:
+                            content_opcion = {}
+                            content_opcion['id_opcion']= l.id
+                            content_opcion['opcion_nombre']= l.texto   
+                            opciones.append(content_opcion)
+                        content_pregunta['opciones']=opciones
+                    
+                    preguntas.append(content_pregunta)
 
-            lista.append(dict_tipo_encuesta)
+                content_encuesta['preguntas']= preguntas
+
+                encuestas.append(content_encuesta)
+
+            content_tipo_encuesta['encuestas']= encuestas
+
+            data.append(content_tipo_encuesta)
 
         response_object = {
             'status': 'success',
-            'data': lista
+            'data': data
         }
         return response_object, 200
 
@@ -177,8 +203,21 @@ class RespuestaList(Resource):
 
         try:
             array_temp = [] 
+            array_tipo_perfil = [] 
+
+            tipo_perfil = TipoPerfil.query.filter_by(id_tipo_encuesta=1).all()
+
+            for t in tipo_perfil:
+                temporal = temp_a(
+                    id_perfil= t.id,
+                    valor=0,
+                    estado = "0"
+                ) 
+                array_temp.append(temporal)
 
             for i in opciones:
+                encuesta = Encuesta.query.filter_by(id=id_test).first()    
+
                 opcion = Opcion.query.filter_by(id=i).first() 
                 id_opcion = opcion.id
                 id_pregunta = opcion.id_pregunta
@@ -194,14 +233,6 @@ class RespuestaList(Resource):
                 db.session.flush()
                 pregunta = Pregunta.query.filter_by(id=id_pregunta).first() 
                 id_perfil = pregunta.id_tipo_perfil
-                
-                temporal = temp_a(
-                    id_perfil=id_perfil,
-                    valor=valor,
-                    estado = "0"
-                ) 
-                array_temp.append(temporal)
-
                 for j in array_temp:
                     if(j.id_perfil== id_perfil):
                         j.valor= j.valor +valor
@@ -243,6 +274,50 @@ class RespuestaList(Resource):
             db.session.rollback()
             return response_object, 400
 
+class ResultadoList(Resource):
+    def get(self):
+        """Listar Config Test"""
+
+        resultado = db.session.query(Resultado).all()
+        print('resultado ', resultado)
+        tipo_perfiles = []
+        for x in resultado:
+            id_tipo_perfil = x.id_tipo_perfil
+            if id_tipo_perfil is not None:
+                print('tipo de perfil ', id_tipo_perfil)
+                perfil = TipoPerfil.query.filter_by(id=id_tipo_perfil).first() 
+                content_result = {}
+                content_result['nombre_perfil']= perfil.nombre
+                content_result['descripcion_perfil']= perfil.descripcion
+                content_result['valor']= x.valor
+                content_result['estado']= x.estado
+                
+                if x.estado == 1:
+                    perfil_carrera = PerfilCarrera.query.filter_by(id=id_tipo_perfil).all() 
+                    carreras= []
+                    for y in perfil_carrera:
+                        id_carrera = y.id_carrera
+                        carrera = Carrera.query.filter_by(id=id_carrera).first()
+                        content_carreras = {}
+                        content_carreras['nombre_carrera'] = carrera.nombre
+                        content_carreras['descripcion_carrera'] = carrera.descripcion
+                        carreras.append(content_carreras)
+
+                    
+                    content_result['carreras']=carreras
+
+                dict_tipo_perfiles = json.dumps(tipo_perfiles)
+                tipo_perfiles.append(content_result)
+
+        
+        
+
+        response_object = {
+            'status': 'success',
+            'data': tipo_perfiles
+        }
+        return response_object, 200
 
 api.add_resource(EncuestaList, '/encuesta')
-api.add_resource(RespuestaList, '/encuestaR')
+api.add_resource(RespuestaList, '/encuestaResp')
+api.add_resource(ResultadoList, '/encuestaResult')
