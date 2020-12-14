@@ -6,7 +6,8 @@ from flask import Blueprint, request
 from sqlalchemy import exc
 from project import db
 from project.api.model_encuesta import TipoPregunta, Pregunta, Resultado
-from project.api.model_encuesta import TipoEncuesta, Encuesta, Opcion, Respuesta
+from project.api.model_encuesta import TipoEncuesta, Encuesta
+from project.api.model_encuesta import Opcion, Respuesta
 
 encuesta_blueprint = Blueprint('encuesta', __name__)
 api = Api(encuesta_blueprint)
@@ -28,7 +29,7 @@ class EncuestaList(Resource):
         q = db.session.query(TipoEncuesta, Encuesta, TipoPregunta,
                              Pregunta, Opcion).filter(
                     TipoEncuesta.id == Encuesta.id_tipo_encuesta,
-                    Encuesta.id == Pregunta.id_test,
+                    Encuesta.id == Pregunta.id_encuesta,
                     TipoPregunta.id == Pregunta.id_tipo_pregunta,
                     Pregunta.id == Opcion.id_pregunta).all()
 
@@ -92,7 +93,7 @@ class EncuestaList(Resource):
                         pregunta=nom_preg,
                         tamanho=tamanho,
                         id_tipo_pregunta=tipo_pregunta,
-                        id_test=encuesta_id,
+                        id_encuesta=encuesta_id,
                         created_by=created_by
                     )
                     db.session.add(pregunta)
@@ -122,11 +123,12 @@ class EncuestaList(Resource):
             db.session.rollback()
             return response_object, 400
 
-class temp_a:  
-    def __init__(self, id_perfil, valor, estado):  
-        self.id_perfil = id_perfil  
+
+class temp_a:
+    def __init__(self, id_perfil, valor, estado):
+        self.id_perfil = id_perfil
         self.valor = valor
-        self.estado = estado 
+        self.estado = estado
 
 
 class RespuestaList(Resource):
@@ -170,63 +172,63 @@ class RespuestaList(Resource):
         }
         if not post_data:
             return response_object, 400
-        
+
         id_user = post_data.get('id_user')
         id_test = post_data.get('id_test')
         opciones = post_data.get('ids_opciones')
 
         try:
-            array_temp = [] 
+            array_temp = []
 
             for i in opciones:
-                opcion = Opcion.query.filter_by(id=i).first() 
+                opcion = Opcion.query.filter_by(id=i).first()
                 id_opcion = opcion.id
                 id_pregunta = opcion.id_pregunta
-                texto = opcion.texto 
+                texto = opcion.texto
                 valor = opcion.valor
                 respuesta = Respuesta(
                     texto=texto,
                     id_opcion=id_opcion,
                     id_usuario=id_user,
                     created_by=id_user
-                )                 
+                )
                 db.session.add(respuesta)
                 db.session.flush()
-                pregunta = Pregunta.query.filter_by(id=id_pregunta).first() 
+                pregunta = Pregunta.query.filter_by(id=id_pregunta).first()
                 id_perfil = pregunta.id_tipo_perfil
-                
+
                 temporal = temp_a(
                     id_perfil=id_perfil,
                     valor=valor,
-                    estado = "0"
-                ) 
+                    estado="0"
+                )
                 array_temp.append(temporal)
 
                 for j in array_temp:
-                    if(j.id_perfil== id_perfil):
-                        j.valor= j.valor +valor
+                    if(j.id_perfil == id_perfil):
+                        j.valor = j.valor + valor
 
             print(str(len(array_temp)))
 
             i = 0
-            while i<len(array_temp):
+            while i < len(array_temp):
                 j = 0
                 result = 0
-                while j <len(array_temp):
+                while j < len(array_temp):
                     if array_temp[i].valor >= array_temp[j].valor:
-                        result=result+1
-                    j+=1
-                
+                        result = result+1
+                    j += 1
+
                 if result == len(array_temp):
                     array_temp[i].estado = "1"
-                i+=1
-                
+                i += 1
+
             for k in array_temp:
                 resultado = Resultado(
-                    valor = k.valor ,
-                    estado = k.estado , 
+                    valor=k.valor,
+                    estado=k.estado,
                     etiqueta_ia=None,
-                    id_tipo_perfil = k.id_perfil,
+                    id_tipo_perfil=k.id_perfil,
                     id_usuario=id_user,
                     id_test=id_test,
                     created_by=id_user
@@ -236,7 +238,8 @@ class RespuestaList(Resource):
 
             db.session.commit()
             response_object['status'] = 'success'
-            response_object['message'] = 'Las respuestas y resultados se agregaron correctamente'
+            response_object['message'] = 'Las respuestas y resultados\
+                se agregaron correctamente'
             return response_object, 201
 
         except exc.IntegrityError:
